@@ -19,6 +19,10 @@ public class PropertyRepository : IPropertyRepository
     public async Task AddAsync(Property property, CancellationToken ct = default)
         => await _db.Properties.AddAsync(property, ct);
 
+    public async Task AddTalhaoAsync(Talhao talhao, CancellationToken ct)
+        => await _db.Talhoes.AddAsync(talhao, ct);
+
     public async Task SaveChangesAsync(CancellationToken ct = default)
         => await _db.SaveChangesAsync(ct);
+
 }

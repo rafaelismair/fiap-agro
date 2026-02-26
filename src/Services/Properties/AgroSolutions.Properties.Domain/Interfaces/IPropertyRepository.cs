@@ -7,5 +7,6 @@ public interface IPropertyRepository
     Task<Property?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<IEnumerable<Property>> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
     Task AddAsync(Property property, CancellationToken ct = default);
+    Task AddTalhaoAsync(Talhao talhao, CancellationToken ct);
     Task SaveChangesAsync(CancellationToken ct = default);
 }
