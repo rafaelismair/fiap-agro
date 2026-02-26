@@ -30,11 +30,14 @@ public class PropertyService : IPropertyService
         var t = property.AddTalhao(request.Name, request.Culture, request.AreaHectares);
         if (!t.IsSuccess) return Result<TalhaoResponse>.Failure(t.Error!);
 
+        await _repo.AddTalhaoAsync(t.Value!, ct);
+
         await _repo.SaveChangesAsync(ct);
 
         var talhao = t.Value!;
         return Result<TalhaoResponse>.Success(new TalhaoResponse(talhao.Id, talhao.Name, talhao.Culture, talhao.AreaHectares, talhao.Status));
     }
+
 
     public async Task<Result<IEnumerable<PropertyResponse>>> GetPropertiesByUserAsync(Guid userId, CancellationToken ct = default)
     {
