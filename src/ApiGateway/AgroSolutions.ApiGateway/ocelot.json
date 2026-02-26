@@ -1,0 +1,35 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "identity-service", "Port": 80 }],
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/properties/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "properties-service", "Port": 80 }],
+      "UpstreamPathTemplate": "/api/properties/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    },
+    {
+      "DownstreamPathTemplate": "/api/sensors/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "ingestion-service", "Port": 80 }],
+      "UpstreamPathTemplate": "/api/sensors/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/alerts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "analysis-service", "Port": 80 }],
+      "UpstreamPathTemplate": "/api/alerts/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" }
+    }
+  ],
+  "GlobalConfiguration": { "BaseUrl": "http://api-gateway" }
+}

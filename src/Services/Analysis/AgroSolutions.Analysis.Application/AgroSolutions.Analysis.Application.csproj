@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AgroSolutions.Analysis.Domain\AgroSolutions.Analysis.Domain.csproj" />
+    <ProjectReference Include="..\..\Ingestion\AgroSolutions.Ingestion.Domain\AgroSolutions.Ingestion.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\AgroSolutions.MessageBus\AgroSolutions.MessageBus.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\AgroSolutions.Common\AgroSolutions.Common.csproj" />
+  </ItemGroup>
+</Project>

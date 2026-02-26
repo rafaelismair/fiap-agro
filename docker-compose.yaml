@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  postgres-identity:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agro_identity
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports: ["5432:5432"]
+    networks: [agro]
+
+  postgres-properties:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agro_properties
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports: ["5433:5432"]
+    networks: [agro]
+
+  mongodb:
+    image: mongo:7
+    ports: ["27017:27017"]
+    networks: [agro]
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks: [agro]
+
+  identity-service:
+    build:
+      context: .
+      dockerfile: src/Services/Identity/AgroSolutions.Identity.API/Dockerfile
+    ports: ["5001:80"]
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: Host=postgres-identity;Database=agro_identity;Username=postgres;Password=postgres123
+    depends_on: [postgres-identity]
+    networks: [agro]
+
+  properties-service:
+    build:
+      context: .
+      dockerfile: src/Services/Properties/AgroSolutions.Properties.API/Dockerfile
+    ports: ["5002:80"]
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: Host=postgres-properties;Database=agro_properties;Username=postgres;Password=postgres123
+    depends_on: [postgres-properties]
+    networks: [agro]
+
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: src/Services/Ingestion/AgroSolutions.Ingestion.API/Dockerfile
+    ports: ["5003:80"]
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      MongoDB__ConnectionString: mongodb://mongodb:27017
+      RabbitMQ__Host: rabbitmq
+    depends_on: [mongodb, rabbitmq]
+    networks: [agro]
+
+  analysis-service:
+    build:
+      context: .
+      dockerfile: src/Services/Analysis/AgroSolutions.Analysis.API/Dockerfile
+    ports: ["5004:80"]
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      MongoDB__ConnectionString: mongodb://mongodb:27017
+      RabbitMQ__Host: rabbitmq
+    depends_on: [mongodb, rabbitmq]
+    networks: [agro]
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: src/ApiGateway/AgroSolutions.ApiGateway/Dockerfile
+    ports: ["5000:8080"]
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+    depends_on: [identity-service, properties-service, ingestion-service, analysis-service]
+    networks: [agro]
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["9090:9090"]
+    volumes:
+      - ./k8s/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks: [agro]
+
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    depends_on: [prometheus]
+    networks: [agro]
+
+networks:
+  agro:
+    driver: bridge
