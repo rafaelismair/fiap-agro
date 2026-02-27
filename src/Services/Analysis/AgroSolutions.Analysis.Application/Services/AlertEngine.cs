@@ -18,23 +18,37 @@ public class AlertEngine
         _logger = logger;
     }
 
-    public async Task ProcessAsync(SensorDataReceivedEvent sensorData, CancellationToken ct)
+    public async Task<IReadOnlyCollection<string>> ProcessAsync(SensorDataReceivedEvent sensorData, CancellationToken ct)
+{
+    var generatedTypes = new List<string>();
+
+    foreach (var rule in _rules)
     {
-        foreach (var rule in _rules)
+        var ev = await rule.EvaluateAsync(sensorData, ct);
+        if (ev is null) continue;
+
+        var type = ev.AlertType switch
         {
-            var ev = await rule.EvaluateAsync(sensorData, ct);
-            if (ev is null) continue;
+            "DROUGHT_ALERT" => "DROUGHT_ALERT",
+            "PEST_RISK" => "PEST_RISK",
+            _ => ev.AlertType
+        };
 
-            _logger.LogWarning("Alert generated {Type} for Talhão {TalhaoId}", ev.AlertType, ev.TalhaoId);
+        generatedTypes.Add(type);
 
-            await _alerts.AddAsync(new Alert
-            {
-                TalhaoId = ev.TalhaoId,
-                AlertType = ev.AlertType,
-                Message = ev.Message,
-                Severity = ev.Severity,
-                GeneratedAt = ev.GeneratedAt
-            }, ct);
-        }
+        _logger.LogWarning("Alert generated {Type} for Talhão {TalhaoId}", type, ev.TalhaoId);
+
+        await _alerts.AddAsync(new Alert
+        {
+            TalhaoId = ev.TalhaoId,
+            AlertType = type,
+            Message = ev.Message,
+            Severity = ev.Severity,
+            GeneratedAt = ev.GeneratedAt
+        }, ct);
     }
+
+    return generatedTypes;
+}
+
 }

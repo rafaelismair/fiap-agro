@@ -1,6 +1,7 @@
 using AgroSolutions.Analysis.Application.Services;
 using AgroSolutions.Common.Events;
 using AgroSolutions.MessageBus;
+using AgroSolutions.Analysis.API.Telemetry;
 
 namespace AgroSolutions.Analysis.API.BackgroundServices;
 
@@ -25,8 +26,23 @@ public class SensorDataConsumer : BackgroundService
         {
             using var scope = _scopeFactory.CreateScope();
             var engine = scope.ServiceProvider.GetRequiredService<AlertEngine>();
-            await engine.ProcessAsync(ev, stoppingToken);
+
+            var generatedTypes = await engine.ProcessAsync(ev, stoppingToken);
+
+            AnalysisMetrics.ClearAlert(ev.TalhaoId, "DROUGHT_ALERT");
+            AnalysisMetrics.ClearAlert(ev.TalhaoId, "PEST_RISK");
+            AnalysisMetrics.SetStatus(ev.TalhaoId, "Normal");
+
+            foreach (var type in generatedTypes.Distinct())
+                AnalysisMetrics.MarkAlert(ev.TalhaoId, type);
+
+            if (generatedTypes.Contains("DROUGHT_ALERT"))
+                AnalysisMetrics.SetStatus(ev.TalhaoId, "Alerta de Seca");
+            else if (generatedTypes.Contains("PEST_RISK"))
+                AnalysisMetrics.SetStatus(ev.TalhaoId, "Risco de Praga");
+
         }, stoppingToken);
+
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
