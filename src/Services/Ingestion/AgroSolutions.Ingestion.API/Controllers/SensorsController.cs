@@ -16,7 +16,7 @@ public class SensorsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Ingest([FromBody] SensorDataRequest request, CancellationToken ct)
     {
-        IngestionMetrics.Observe(request.TalhaoId, request.SoilMoisture, request.Temperature, request.Precipitation);
+        IngestionMetrics.Observe(request.TalhaoId, request.TalhaoName ?? "Talhão Sem nome", request.SoilMoisture, request.Temperature, request.Precipitation);
 
         var result = await _service.IngestSensorDataAsync(request, ct);
         return result.IsSuccess ? Created("", result.Value) : BadRequest(new { error = result.Error });
