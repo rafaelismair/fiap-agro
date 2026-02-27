@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="FluentAssertions" Version="8.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.8.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Services\Properties\AgroSolutions.Properties.Application\AgroSolutions.Properties.Application.csproj" />
+    <ProjectReference Include="..\..\src\Services\Properties\AgroSolutions.Properties.Domain\AgroSolutions.Properties.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Services\Properties\AgroSolutions.Properties.Infrastructure\AgroSolutions.Properties.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
