@@ -4,7 +4,6 @@ namespace AgroSolutions.Ingestion.API.Telemetry;
 
 public static class IngestionMetrics
 {
-    // Labels: talhaoId + talhaoName
     private static readonly string[] Labels = new[] { "talhaoId", "talhaoName" };
 
     public static readonly Gauge SoilMoisturePercent = Metrics.CreateGauge(

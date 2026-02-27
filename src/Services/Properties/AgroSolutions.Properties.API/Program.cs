@@ -11,6 +11,8 @@ using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddDbContext<PropertiesDbContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
