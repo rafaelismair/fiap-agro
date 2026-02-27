@@ -48,6 +48,7 @@ services:
       dockerfile: src/Services/Properties/AgroSolutions.Properties.API/Dockerfile
     ports: ["5002:80"]
     environment:
+      InternalApi__Key: "0123456789-0123456789"
       ASPNETCORE_URLS: http://+:80
       ConnectionStrings__DefaultConnection: Host=postgres-properties;Database=agro_properties;Username=postgres;Password=postgres123
     depends_on: [postgres-properties]
@@ -59,6 +60,7 @@ services:
       dockerfile: src/Services/Ingestion/AgroSolutions.Ingestion.API/Dockerfile
     ports: ["5003:80"]
     environment:
+      InternalApi__Key: "0123456789-0123456789"
       ASPNETCORE_URLS: http://+:80
       MongoDB__ConnectionString: mongodb://mongodb:27017
       RabbitMQ__Host: rabbitmq
@@ -71,6 +73,7 @@ services:
       dockerfile: src/Services/Analysis/AgroSolutions.Analysis.API/Dockerfile
     ports: ["5004:80"]
     environment:
+      InternalApi__Key: "0123456789-0123456789"
       ASPNETCORE_URLS: http://+:80
       MongoDB__ConnectionString: mongodb://mongodb:27017
       RabbitMQ__Host: rabbitmq
