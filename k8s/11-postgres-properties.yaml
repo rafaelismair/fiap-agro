@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-properties
+  namespace: agro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-properties
+  template:
+    metadata:
+      labels:
+        app: postgres-properties
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: agro_properties
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-properties
+  namespace: agro
+spec:
+  selector:
+    app: postgres-properties
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
