@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: properties-service
+  namespace: agro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: properties-service
+  template:
+    metadata:
+      labels:
+        app: properties-service
+    spec:
+      containers:
+        - name: properties-service
+          image: rismair/agro-properties:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: InternalApi__Key
+              value: "0123456789-0123456789"
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: ConnectionStrings__DefaultConnection
+              value: Host=postgres-properties;Database=agro_properties;Username=postgres;Password=postgres123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: properties-service
+  namespace: agro
+spec:
+  selector:
+    app: properties-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
