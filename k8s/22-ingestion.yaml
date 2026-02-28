@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingestion-service
+  namespace: agro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingestion-service
+  template:
+    metadata:
+      labels:
+        app: ingestion-service
+    spec:
+      containers:
+        - name: ingestion-service
+          image: rismair/agro-ingestion:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: InternalApi__Key
+              value: "0123456789-0123456789"
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: MongoDB__ConnectionString
+              value: mongodb://mongodb:27017
+            - name: RabbitMQ__Host
+              value: rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingestion-service
+  namespace: agro
+spec:
+  selector:
+    app: ingestion-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
