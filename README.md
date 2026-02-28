@@ -10,7 +10,7 @@
 Infra:
 - PostgreSQL (identity) `5432`
 - PostgreSQL (properties) `5433`
-- MongoDB `27017`
+- MongoDB `27017` 
 - RabbitMQ UI `15672`
 - Prometheus `9090`
 - Grafana `3000`

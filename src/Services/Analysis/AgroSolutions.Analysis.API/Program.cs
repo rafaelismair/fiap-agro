@@ -11,8 +11,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Prometheus;
+using AgroSolutions.Analysis.API.Internal;
+using Microsoft.Extensions.Caching.Memory;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddHttpClient<PropertiesInternalClient>(c =>
+{
+    c.BaseAddress = new Uri("http://properties-service");
+});
+
 
 var mongoConn = builder.Configuration["MongoDB:ConnectionString"] ?? "mongodb://mongodb:27017";
 var mongo = new MongoClient(mongoConn).GetDatabase("agro_sensors");
